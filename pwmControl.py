@@ -6,7 +6,7 @@ blue_pin = 22
 
 pi = pigpio.pi()
 if not pi.connected:
-    print("no conection")
+    print("pigpiod: no conection")
     exit(1)
 
 

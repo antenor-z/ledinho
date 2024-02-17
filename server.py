@@ -1,14 +1,12 @@
 from flask import Flask, render_template
 import pwmControl
 import atexit
-
 app = Flask(__name__)
 current_color = {"c": "000000"}
 
 @app.get("/")
 def main():
     return render_template("index.html")
-
 
 @app.get("/currentColor")
 def get_current_color():
@@ -34,7 +32,12 @@ def write_color(color:str):
 
     return "ok"
 
+# Start with lights turned off
+with app.app_context():
+    write_color("000000")
+
 def clean_exit():
+    write_color("000000")
     pwmControl.stop()
 
 atexit.register(clean_exit)

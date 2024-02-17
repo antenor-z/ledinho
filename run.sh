@@ -1,4 +1,7 @@
 #!/bin/bash
-sudo pigpiod
+if ! pgrep -x "pigpiod" > /dev/null
+then
+    sudo pigpiod
+fi
 source venv/bin/activate
-gunicorn -c gunicorn_config.py server:app -D >> log.log 2>&1
+gunicorn -c gunicorn_config.py server:app -D
