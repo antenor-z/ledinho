@@ -15,3 +15,7 @@ def setPWM(red, green, blue):
     pi.set_PWM_dutycycle(green_pin, green)
     pi.set_PWM_dutycycle(blue_pin, blue)
 
+def stop():
+    print("Releasing pigpio resources")
+    pi.stop()
+    print("Released pigpio resources")

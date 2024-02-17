@@ -1,5 +1,6 @@
 from flask import Flask, render_template
-from pwmControl import setPWM
+import pwmControl
+import atexit
 
 app = Flask(__name__)
 current_color = {"c": "000000"}
@@ -28,10 +29,15 @@ def write_color(color:str):
     blue = int(color[4:6], 16)
 
     print("RGB values:", red, green, blue)
-    setPWM(red, green, blue)
+    pwmControl.setPWM(red, green, blue)
     current_color["c"] = color
 
     return "ok"
+
+def clean_exit():
+    pwmControl.stop()
+
+atexit.register(clean_exit)
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000, host="0.0.0.0")
