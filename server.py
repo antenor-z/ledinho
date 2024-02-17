@@ -1,6 +1,7 @@
 from flask import Flask, render_template
 import pwmControl
 import atexit
+import time
 app = Flask(__name__)
 current_color = {"c": "000000"}
 
@@ -32,9 +33,8 @@ def write_color(color:str):
 
     return "ok"
 
-# Start with lights turned off
 with app.app_context():
-    write_color("000000")
+    pwmControl.testPWM(50, 0.25)
 
 def clean_exit():
     write_color("000000")
