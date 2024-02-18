@@ -3,7 +3,7 @@ import pwmControl
 import atexit
 import time
 app = Flask(__name__)
-current_color = {"c": "000000"}
+current_color = {"c": [0, 0, 0]}
 
 @app.get("/")
 def main():
@@ -11,7 +11,8 @@ def main():
 
 @app.get("/currentColor")
 def get_current_color():
-    return current_color["c"]
+    cc = current_color["c"]
+    return f"{cc[0:2]:x}{cc[2:4]:x}{cc[4:6]:x}"
 
 @app.get("/writeColor/<string:color>")
 def write_color(color:str):
@@ -28,10 +29,26 @@ def write_color(color:str):
     blue = int(color[4:6], 16)
 
     print("RGB values:", red, green, blue)
-    pwmControl.setPWM(red, green, blue)
-    current_color["c"] = color
+    fade_color(current_color["c"], [red, green, blue])
+    current_color["c"] = [red, green, blue]
 
     return "ok"
+
+def linear(start, end, steps, i):
+    diff = end - start
+    steps = steps - 1
+    alpha = diff / steps
+    return int(start + alpha * i)
+
+def fade_color(color_start, color_end):
+    n_steps = 15
+    for i in range(n_steps):
+        pwmControl.setPWM(
+            linear(color_start[0], color_end[0], n_steps, i),
+            linear(color_start[1], color_end[1], n_steps, i),
+            linear(color_start[2], color_end[2], n_steps, i)
+        )
+        time.sleep(1 / 30)
 
 with app.app_context():
     pwmControl.testPWM(50, 0.25)
