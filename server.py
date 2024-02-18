@@ -15,7 +15,7 @@ def get_current_color():
     return "{:02x}{:02x}{:02x}".format(cc[0], cc[1], cc[2])
 
 @app.get("/writeColor/<string:color>")
-def write_color(color:str):
+def write_color(color:str, save=True):
     if color.startswith("#"): 
         color = color[1:]
     if len(color) != 6: 
@@ -31,6 +31,9 @@ def write_color(color:str):
     print("RGB values:", red, green, blue)
     fade_color(current_color["c"], [red, green, blue])
     current_color["c"] = [red, green, blue]
+    if save:
+        with open("currentColor", "w") as fp:
+            fp.write(get_current_color())
 
     return "ok"
 
@@ -51,10 +54,11 @@ def fade_color(color_start, color_end):
         time.sleep(1 / 30)
 
 with app.app_context():
-    pwmControl.testPWM(50, 0.25)
+    with open("currentColor", "r") as fp:
+        write_color(fp.read())
 
 def clean_exit():
-    write_color("000000")
+    write_color("000000", save = False)
     pwmControl.stop()
 
 atexit.register(clean_exit)
