@@ -12,7 +12,7 @@ def main():
 @app.get("/currentColor")
 def get_current_color():
     cc = current_color["c"]
-    return f"{cc[0:2]:x}{cc[2:4]:x}{cc[4:6]:x}"
+    return "{:02x}{:02x}{:02x}".format(cc[0], cc[1], cc[2])
 
 @app.get("/writeColor/<string:color>")
 def write_color(color:str):
